@@ -11,12 +11,16 @@
 
 ; TODO: investigate Ctrl clicking using CAPSLOCK, such as for opening links in a new tab. Script currently does not consider mouse inputs. 
 
+
 ; Initialize InputHook used to detect additional keypresses
 global ih := InputHook("L1 V T0.5") 
 ; L1 = stop after 1 character
 ; V = visible (transparent mode)
 ; T0.5 = timeout after 0.5 seconds (in testing & subject to change. Means that an accidental press can be held to cancel the esc input)
 ih.KeyOpt("{All}", "E") ; Treat ALL keys as "End Keys" (triggers stop)
+
+; context block to disable hotkeys when helldonkers is active
+#HotIf !WinActive("ahk_exe helldivers2.exe")
 
 ; CapsLock key pressed
 ; * allows other modifiers to be held at the same time 
@@ -25,7 +29,7 @@ ih.KeyOpt("{All}", "E") ; Treat ALL keys as "End Keys" (triggers stop)
 
     Send "{Blind}{LCtrl Down}" ; send ctrl down immediately
     ; thus if any key is pressed while holding CapsLock, it is treated as though Ctrl is held
-
+    
     ; start InputHook to detect additional keypresses
     ;   if any key is pressed, the InputHook will stop automatically which signals to $CapsLock Up that
     ;   the user desires a Ctrl hold behavior (as why else would they press another key?)
@@ -35,7 +39,7 @@ ih.KeyOpt("{All}", "E") ; Treat ALL keys as "End Keys" (triggers stop)
 ; CapsLock key released
 *$CapsLock Up::{
     Send "{Blind}{LCtrl Up}" ; release ctrl regardless of mode
-
+    
     if (ih.InProgress = 1) { ; means InputHook is still running, so no additional key was pressed
         ; implying the user is not attempting a chord and therefore wants an Esc tap
         ih.Stop() ; stop InputHook
@@ -53,3 +57,7 @@ $Esc::{
         SetCapsLockState "Off"
     }
 }
+
+
+; This closes the context block, so hotkeys below this would work globally again
+#HotIf
