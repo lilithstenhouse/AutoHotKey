@@ -7,9 +7,6 @@
 {
     Send "é"
 }
-!E::{
-    Send "É"
-}
 
 ; ALT+3 sends £
 !3:: {
